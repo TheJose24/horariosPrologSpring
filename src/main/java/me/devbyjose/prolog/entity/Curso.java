@@ -16,6 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Curso {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @Column(nullable = false)
