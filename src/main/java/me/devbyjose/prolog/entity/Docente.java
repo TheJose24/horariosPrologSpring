@@ -27,12 +27,12 @@ public class Docente {
     
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "docente_profesiones")
+    @CollectionTable(name = "docente_profesiones", joinColumns = @JoinColumn(name = "docente_id"))
     private Set<Profesion> profesiones = new HashSet<>();
     
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "docente_certificaciones")
+    @CollectionTable(name = "docente_certificaciones", joinColumns = @JoinColumn(name = "docente_id"))
     private Set<Certificacion> certificaciones = new HashSet<>();
     
     @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL)
