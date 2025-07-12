@@ -1,0 +1,103 @@
+% ============================================================================
+% BASE DE CONOCIMIENTO - SISTEMA DE HORARIOS
+% ============================================================================
+
+% Directivas para modulos necesarios
+:- use_module(library(lists)).
+:- use_module(library(clpfd)).
+
+% Predicados dinamicos para permitir modificaciones en tiempo de ejecucion
+:- dynamic(docente/3).
+:- dynamic(curso/7).
+:- dynamic(aula/6).
+:- dynamic(horario/6).
+
+% ============================================================================
+% DATOS DE DOCENTES
+% ============================================================================
+% Estructura: docente(ID, NombreCompleto, ListaEspecialidades)
+
+docente(1, 'Dr. Garcia Lopez', [informatica, matematicas]).
+docente(2, 'Mg. Ana Rodriguez', [fisica, matematicas]).
+docente(3, 'Ing. Carlos Mendoza', [informatica, sistemas]).
+docente(4, 'Dra. Maria Santos', [quimica, biologia]).
+docente(5, 'Mg. Luis Herrera', [matematicas, estadistica]).
+docente(6, 'Dr. Patricia Vega', [fisica, matematicas]).
+docente(7, 'Ing. Roberto Silva', [informatica, redes]).
+docente(8, 'Mg. Carmen Torres', [literatura, comunicacion]).
+docente(9, 'Mg. Carmen Torres', [literatura, comunicacion]).
+docente(10, 'Mg. Carmen Torres', [literatura, comunicacion]).
+
+% ============================================================================
+% DATOS DE CURSOS
+% ============================================================================
+% Estructura: curso(CodigoCurso, NombreCurso, Ciclo, Naturaleza, TipoSesion, HorasSemana, EquipamientoNecesario)
+
+curso(1, 'Programacion Funcional', 4, carrera, teorico_practico, 4, [computadoras, internet]).
+curso(2, 'Calculo I', 1, general, teorico, 3, [proyector, pizarra]).
+curso(3, 'Fisica General', 2, general, teorico_practico, 4, [proyector, laboratorio_fisica]).
+curso(4, 'Quimica Organica', 3, carrera, practico, 2, [laboratorio_quimica, ventilacion]).
+curso(5, 'Estadistica', 2, general, teorico, 3, [proyector, computadoras]).
+curso(6, 'Programacion Web', 5, carrera, teorico_practico, 4, [computadoras, internet]).
+curso(7, 'Algebra Linear', 2, general, teorico, 2, [proyector, pizarra]).
+curso(8, 'Comunicacion', 1, general, teorico, 2, [proyector, audio]).
+
+% ============================================================================
+% DATOS DE AULAS
+% ============================================================================
+% Estructura: aula(NumeroAula, Piso, Ubicacion, Capacidad, EquipamientoDisponible, TipoAula)
+
+aula(101, 1, 'A-101', 40, [proyector, pizarra, audio], teorica).
+aula(102, 1, 'A-102', 35, [proyector, pizarra], teorica).
+aula(201, 2, 'B-201', 30, [proyector, computadoras, internet], laboratorio_computo).
+aula(202, 2, 'B-202', 30, [proyector, computadoras, internet], laboratorio_computo).
+aula(301, 3, 'C-301', 25, [laboratorio_quimica, ventilacion, agua], laboratorio_quimica).
+aula(302, 3, 'C-302', 25, [laboratorio_fisica, equipos_medicion], laboratorio_fisica).
+aula(401, 4, 'D-401', 50, [proyector, pizarra, audio], teorica).
+aula(402, 4, 'D-402', 45, [proyector, pizarra], teorica).
+
+% ============================================================================
+% PREDICADOS DE UTILIDAD
+% ============================================================================
+
+% Contar total de docentes
+total_docentes(Total) :-
+    findall(ID, docente(ID, _, _), Lista),
+    length(Lista, Total).
+
+% Contar total de cursos
+total_cursos(Total) :-
+    findall(Codigo, curso(Codigo, _, _, _, _, _, _), Lista),
+    length(Lista, Total).
+
+% Contar total de aulas
+total_aulas(Total) :-
+    findall(Numero, aula(Numero, _, _, _, _, _), Lista),
+    length(Lista, Total).
+
+% Limpiar horarios generados
+limpiar_horarios :-
+    retractall(horario(_, _, _, _, _, _)).
+
+% ============================================================================
+% PREDICADOS DE INICIALIZACION
+% ============================================================================
+
+% Inicializar sistema
+inicializar_sistema :-
+    write('Sistema de Horarios inicializado correctamente'), nl,
+    total_docentes(Docentes),
+    total_cursos(Cursos),
+    total_aulas(Aulas),
+    format('Datos cargados: ~w docentes, ~w cursos, ~w aulas~n', [Docentes, Cursos, Aulas]).
+
+% Mostrar estadisticas del sistema
+mostrar_estadisticas :-
+    total_docentes(Docentes),
+    total_cursos(Cursos),
+    total_aulas(Aulas),
+    format('=== ESTADISTICAS DEL SISTEMA ===~n'),
+    format('Docentes registrados: ~w~n', [Docentes]),
+    format('Cursos registrados: ~w~n', [Cursos]),
+    format('Aulas disponibles: ~w~n', [Aulas]),
+    format('================================~n').
