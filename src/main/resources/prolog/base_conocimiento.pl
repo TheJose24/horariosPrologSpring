@@ -17,16 +17,16 @@
 % ============================================================================
 % Estructura: docente(ID, NombreCompleto, ListaEspecialidades)
 
-docente(1, 'Dr. Garcia Lopez', [informatica, matematicas]).
-docente(2, 'Mg. Ana Rodriguez', [fisica, matematicas]).
-docente(3, 'Ing. Carlos Mendoza', [informatica, sistemas]).
-docente(4, 'Dra. Maria Santos', [quimica, biologia]).
-docente(5, 'Mg. Luis Herrera', [matematicas, estadistica]).
-docente(6, 'Dr. Patricia Vega', [fisica, matematicas]).
-docente(7, 'Ing. Roberto Silva', [informatica, redes]).
-docente(8, 'Mg. Carmen Torres', [literatura, comunicacion]).
-docente(9, 'Mg. Carmen Torres', [literatura, comunicacion]).
-docente(10, 'Mg. Carmen Torres', [literatura, comunicacion]).
+docente(1, 'Garcia Lopez', [informatica, matematicas]).
+docente(2, 'Ana Rodriguez', [fisica, matematicas]).
+docente(3, 'Carlos Mendoza', [informatica, sistemas]).
+docente(4, 'Maria Santos', [quimica, biologia]).
+docente(5, 'Luis Herrera', [matematicas, estadistica]).
+docente(6, 'Patricia Vega', [fisica, matematicas]).
+docente(7, 'Roberto Silva', [informatica, redes]).
+docente(8, 'Carmen Torres', [literatura, comunicacion]).
+docente(9, 'Carmen Torres', [biologia, comunicacion]).
+docente(10, 'Carmen Torres', [literatura, quimica]).
 
 % ============================================================================
 % DATOS DE CURSOS
@@ -100,4 +100,4 @@ mostrar_estadisticas :-
     format('Docentes registrados: ~w~n', [Docentes]),
     format('Cursos registrados: ~w~n', [Cursos]),
     format('Aulas disponibles: ~w~n', [Aulas]),
-    format('================================~n').
+    format('================================~n').docente(11, 'Juan Perez', [java]).

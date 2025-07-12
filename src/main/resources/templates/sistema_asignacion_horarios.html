@@ -12,9 +12,9 @@
 <header class="bg-red-900 text-white py-5 shadow-lg">
     <div class="container mx-auto flex justify-between items-center px-6">
         <h1 class="text-2xl font-bold tracking-wide">Sistema de Asignación de Horarios</h1>
-        <button class="bg-black hover:bg-red-700 transition text-white px-5 py-2 rounded-md shadow">
-            Ver Cronograma
-        </button>
+        <a href="/generar-horarios" class="bg-black hover:bg-red-700 transition text-white px-5 py-2 rounded-md shadow">
+            Generar Horarios
+        </a>
     </div>
 </header>
 
@@ -56,7 +56,7 @@
                 </div>
                 <div>
                     <label class="block text-gray-700">Tipo de Sesión</label>
-                    <select th:field="*{dias}" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                    <select th:field="*{horas}" class="w-full px-4 py-2 border border-gray-300 rounded-md">
                         <option value="1">Teórico</option>
                         <option value="2">Práctico</option>
                         <option value="3">Teórico y Práctico</option>
@@ -96,22 +96,20 @@
             <thead>
             <tr class="bg-black text-white">
                 <th class="py-3 px-4">ID</th>
-                <th class="py-3 px-4">Código</th>
                 <th class="py-3 px-4">Nombre</th>
                 <th class="py-3 px-4">Ciclo</th>
                 <th class="py-3 px-4">Tipo de Curso</th>
-                <th class="py-3 px-4">Días</th>
+                <th class="py-3 px-4">Horas Semanales</th>
                 <th class="py-3 px-4">Tipo de Aula</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="curso, iStat : ${cursos}" class="border-b hover:bg-red-50 transition">
-                <td class="py-2 px-4" th:text="${iStat.index + 1}">1</td>
                 <td class="py-2 px-4" th:text="${curso.codigo}">COD001</td>
                 <td class="py-2 px-4" th:text="${curso.nombre}">Nombre</td>
                 <td class="py-2 px-4" th:text="${curso.ciclo}">1</td>
                 <td class="py-2 px-4" th:text="${curso.tipoCurso}">Carrera</td>
-                <td class="py-2 px-4" th:text="${curso.dias}">2</td>
+                <td class="py-2 px-4" th:text="${curso.horas}">2</td>
                 <td class="py-2 px-4" th:text="${curso.tipoAula}">Lab. de Computacion</td>
             </tr>
             </tbody>

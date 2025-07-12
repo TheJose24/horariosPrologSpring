@@ -1,18 +1,21 @@
-
 package me.devbyjose.prolog.services;
 
-import me.devbyjose.prolog.model.AsignacionHorario;
 import me.devbyjose.prolog.model.Docente;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import me.devbyjose.prolog.model.Curso;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-
 
 @Service
 public class DocenteService {
+    
+    @Autowired
+    private PrologService prologService;
+    
+    @Autowired
+    private ArchivoService archivoService;
+    
     private final List<Docente> listaDocentes = new ArrayList<>();
     private long idCounter = 1;
 
@@ -21,16 +24,38 @@ public class DocenteService {
             docente.setId(idCounter++);
         }
         listaDocentes.add(docente);
+        prologService.guardarDocenteEnProlog(docente);
     }
 
     public List<Docente> obtenerTodosDocentes() {
-        return listaDocentes;
+        List<Docente> todosDocentes = new ArrayList<>();
+        
+        // Agregar docentes registrados en Java
+        todosDocentes.addAll(listaDocentes);
+        
+        // Agregar docentes desde Prolog
+        List<Docente> docentesProlog = archivoService.leerDocentesDesdeArchivo();
+        todosDocentes.addAll(docentesProlog);
+        
+        return todosDocentes;
     }
-
-    public Map<Curso, List<AsignacionHorario>> obtenerAsignacionesCursos() {
-        Map<Curso, List<AsignacionHorario>> asignaciones = new HashMap<>();
-        List<AsignacionHorario> lista1 = new ArrayList<>();
-        List<AsignacionHorario> lista2 = new ArrayList<>();
-        return asignaciones;
+    
+    public Docente buscarDocentePorId(long docenteId) {
+        // Buscar en docentes de Java
+        for (Docente docente : listaDocentes) {
+            if (docente.getId().equals(docenteId)) {
+                return docente;
+            }
+        }
+        
+        // Buscar en docentes de Prolog
+        List<Docente> docentesProlog = archivoService.leerDocentesDesdeArchivo();
+        for (Docente docente : docentesProlog) {
+            if (docente.getId().equals(docenteId)) {
+                return docente;
+            }
+        }
+        
+        return null;
     }
 }

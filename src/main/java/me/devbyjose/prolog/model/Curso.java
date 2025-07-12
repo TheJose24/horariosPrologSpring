@@ -14,6 +14,6 @@ public class Curso {
     private String nombre;
     private int ciclo;
     private String tipoCurso;
-    private int dias;
+    private int horas;
     private String tipoAula;
 }

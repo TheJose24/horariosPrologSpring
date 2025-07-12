@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios Generados</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+<header class="bg-red-900 text-white py-5 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center px-6">
+        <h1 class="text-2xl font-bold tracking-wide">Horarios Generados</h1>
+        <a href="/" class="bg-black hover:bg-red-700 transition text-white px-5 py-2 rounded-md shadow">
+            Volver al Inicio
+        </a>
+    </div>
+</header>
+
+<div class="container mx-auto px-4 py-10">
+    <div th:if="${exito}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        <span th:text="${mensaje}"></span>
+    </div>
+    
+    <div th:if="${!exito}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <span th:text="${mensaje}"></span>
+    </div>
+
+    <div th:if="${horarios != null and !horarios.empty}" class="overflow-x-auto shadow-xl rounded-lg bg-white p-6">
+        <h2 class="text-xl font-bold text-red-800 mb-4">Cronograma de Clases</h2>
+        <table class="w-full table-auto text-center">
+            <thead>
+                <tr class="bg-black text-white">
+                    <th class="py-3 px-4">Día</th>
+                    <th class="py-3 px-4">Hora</th>
+                    <th class="py-3 px-4">Curso</th>
+                    <th class="py-3 px-4">Docente</th>
+                    <th class="py-3 px-4">Aula</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="horario : ${horarios}" class="border-b hover:bg-red-50 transition">
+                    <td class="py-2 px-4 capitalize" th:text="${horario.dia}"></td>
+                    <td class="py-2 px-4" th:text="${horario.horaInicio + ':00 - ' + horario.horaFin + ':00'}"></td>
+                    <td class="py-2 px-4" th:text="${horario.nombreCurso}"></td>
+                    <td class="py-2 px-4" th:text="${horario.nombreDocente}"></td>
+                    <td class="py-2 px-4" th:text="${horario.ubicacionAula}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div th:if="${horarios == null or horarios.empty}" class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+        <p>No se pudieron generar horarios. Asegúrate de que hay cursos y docentes registrados.</p>
+    </div>
+</div>
+
+</body>
+</html>
