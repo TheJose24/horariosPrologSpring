@@ -23,7 +23,7 @@ public class PrologService {
         archivoService.escribirEnArchivo(hecho);
         
         // Agregar a la base de conocimientos en memoria
-        prologEngine.agregarCursoAProlog(curso);
+        //prologEngine.agregarCursoAProlog(curso);
     }
 
     public void guardarDocenteEnProlog(Docente docente) {
@@ -32,6 +32,6 @@ public class PrologService {
         archivoService.escribirEnArchivo(hecho);
         
         // Agregar a la base de conocimientos en memoria
-        prologEngine.agregarDocenteAProlog(docente);
+        //prologEngine.agregarDocenteAProlog(docente);
     }
 }

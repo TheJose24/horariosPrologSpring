@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 public class PrologFormatterService {
     
     public String formatearCursoParaArchivo(Curso curso) {
-        return String.format("curso(%s, '%s', %d, '%s', %s, 4, %s).%n",
+        return String.format("curso(%s, '%s', %d, %s, %s, 4, %s).%n",
                 curso.getCodigo(), 
                 curso.getNombre(), 
                 curso.getCiclo(), 

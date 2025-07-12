@@ -100,4 +100,6 @@ mostrar_estadisticas :-
     format('Docentes registrados: ~w~n', [Docentes]),
     format('Cursos registrados: ~w~n', [Cursos]),
     format('Aulas disponibles: ~w~n', [Aulas]),
-    format('================================~n').docente(11, 'Juan Perez', [java]).
+    format('================================~n').
+docente(11, 'Juan Perez', [matematicas, fisica]).
+curso(9, 'Redes II', 8, carrera, practico, 4, [computadoras, equipos_redes]).

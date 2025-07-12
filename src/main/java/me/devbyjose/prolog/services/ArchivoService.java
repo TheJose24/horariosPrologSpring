@@ -18,6 +18,7 @@ public class ArchivoService {
     public void escribirEnArchivo(String contenido) {
         try (FileWriter writer = new FileWriter(PROLOG_FILE, true)) {
             writer.write(contenido);
+            writer.flush();
         } catch (IOException e) {
             System.err.println("Error al escribir en archivo: " + e.getMessage());
         }
@@ -61,6 +62,7 @@ public class ArchivoService {
     
     private Docente parsearDocente(String linea) {
         try {
+            // Patrón actualizado para manejar el formato correcto
             Pattern pattern = Pattern.compile("docente\\((\\d+),\\s*'([^']+)',\\s*\\[([^\\]]+)\\]\\)");
             Matcher matcher = pattern.matcher(linea);
             
@@ -71,6 +73,7 @@ public class ArchivoService {
                 
                 List<String> especialidades = new ArrayList<>();
                 if (especialidadesStr != null && !especialidadesStr.trim().isEmpty()) {
+                    // Dividir por comas y limpiar espacios
                     String[] especialidadesArray = especialidadesStr.split(",");
                     for (String especialidad : especialidadesArray) {
                         especialidades.add(especialidad.trim());
@@ -87,6 +90,7 @@ public class ArchivoService {
     
     private Curso parsearCurso(String linea) {
         try {
+            // Patrón para parsear cursos: curso(1, 'Nombre', 4, carrera, teorico_practico, 4, [equipamiento]).
             Pattern pattern = Pattern.compile("curso\\((\\d+),\\s*'([^']+)',\\s*(\\d+),\\s*(\\w+),\\s*(\\w+),\\s*(\\d+),\\s*\\[([^\\]]+)\\]\\)");
             Matcher matcher = pattern.matcher(linea);
             

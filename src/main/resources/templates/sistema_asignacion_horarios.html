@@ -12,9 +12,14 @@
 <header class="bg-red-900 text-white py-5 shadow-lg">
     <div class="container mx-auto flex justify-between items-center px-6">
         <h1 class="text-2xl font-bold tracking-wide">Sistema de Asignación de Horarios</h1>
-        <a href="/generar-horarios" class="bg-black hover:bg-red-700 transition text-white px-5 py-2 rounded-md shadow">
-            Generar Horarios
-        </a>
+        <div class="flex space-x-4">
+            <a href="/generar-horarios" class="bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded-md shadow">
+                Generar Horarios
+            </a>
+            <a href="/ver-asignaciones" class="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded-md shadow">
+                Ver Asignaciones
+            </a>
+        </div>
     </div>
 </header>
 
@@ -95,11 +100,11 @@
         <table class="w-full table-auto text-center">
             <thead>
             <tr class="bg-black text-white">
-                <th class="py-3 px-4">ID</th>
+                <th class="py-3 px-4">Código</th>
                 <th class="py-3 px-4">Nombre</th>
                 <th class="py-3 px-4">Ciclo</th>
                 <th class="py-3 px-4">Tipo de Curso</th>
-                <th class="py-3 px-4">Horas Semanales</th>
+                <th class="py-3 px-4">Horas semanales</th>
                 <th class="py-3 px-4">Tipo de Aula</th>
             </tr>
             </thead>
@@ -117,8 +122,7 @@
     </div>
 </section>
 
-<!-- Apartado de Docente -->
-<!-- Encabezado de Docentes -->
+<!-- Sección de Docentes -->
 <section class="container mx-auto px-4 py-10">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-red-800">Docentes Registrados</h2>
@@ -165,11 +169,26 @@
                     <label class="block text-gray-700">Nombre Completo</label>
                     <input type="text" th:field="*{nombre}" required class="w-full px-4 py-2 border border-gray-300 rounded-md" />
                 </div>
-                <div class="md:col-span-2">
-                    <label class="block text-gray-700">Especialidades (separadas por coma)</label>
-                    <input type="text" name="especialidades"
-                           placeholder="Ej: Programación, Redes, Base de Datos"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                <div>
+                    <label class="block text-gray-700">Especialidades</label>
+                    <select name="especialidades" multiple class="w-full px-4 py-2 border border-gray-300 rounded-md" size="5">
+                        <option value="informatica">Informática</option>
+                        <option value="matematicas">Matemáticas</option>
+                        <option value="fisica">Física</option>
+                        <option value="quimica">Química</option>
+                        <option value="biologia">Biología</option>
+                        <option value="sistemas">Sistemas</option>
+                        <option value="redes">Redes</option>
+                        <option value="estadistica">Estadística</option>
+                        <option value="comunicacion">Comunicación</option>
+                        <option value="literatura">Literatura</option>
+                        <option value="ingles">Inglés</option>
+                        <option value="economia">Economía</option>
+                        <option value="administracion">Administración</option>
+                        <option value="derecho">Derecho</option>
+                        <option value="psicologia">Psicología</option>
+                    </select>
+                    <small class="text-gray-500">Mantén presionado Ctrl para seleccionar múltiples especialidades</small>
                 </div>
             </div>
             <div class="text-right pt-4">
