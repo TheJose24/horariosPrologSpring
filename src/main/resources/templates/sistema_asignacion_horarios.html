@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema de Asignación de Horarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+<!-- Header -->
+<header class="bg-red-900 text-white py-5 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center px-6">
+        <h1 class="text-2xl font-bold tracking-wide">Sistema de Asignación de Horarios</h1>
+        <button class="bg-black hover:bg-red-700 transition text-white px-5 py-2 rounded-md shadow">
+            Ver Cronograma
+        </button>
+    </div>
+</header>
+
+
+
+<!-- Modal -->
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-8 w-full max-w-3xl transform scale-95 opacity-0 transition duration-300" id="modalContent">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-red-800">Formulario de Curso</h2>
+            <button id="closeModal" class="text-red-800 text-2xl font-bold">&times;</button>
+        </div>
+        <form th:action="@{/registrar-curso}" th:object="${curso}" method="post" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700">Código</label>
+                    <input type="text" th:field="*{codigo}" required class="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                </div>
+                <div>
+                    <label class="block text-gray-700">Nombre</label>
+                    <input type="text" th:field="*{nombre}" required class="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                </div>
+                <div>
+                    <label class="block text-gray-700">Ciclo</label>
+                    <select th:field="*{ciclo}" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                        <option th:each="i : ${#numbers.sequence(1,10)}" th:value="${i}" th:text="${i}"></option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Tipo de Curso</label>
+                    <select th:field="*{tipoCurso}" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                        <option value="Carrera">Carrera</option>
+                        <option value="General">General</option>
+                        <option value="Especialidad">Especialidad</option>
+                        <option value="Electivo">Electivo</option>
+                        <option value="Investigación">Investigación</option>
+                        <option value="Formación Personal">Formación Personal</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Tipo de Sesión</label>
+                    <select th:field="*{dias}" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                        <option value="1">Teórico</option>
+                        <option value="2">Práctico</option>
+                        <option value="3">Teórico y Práctico</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Tipo de Aula</label>
+                    <select th:field="*{tipoAula}" class="w-full px-4 py-2 border border-gray-300 rounded-md">
+                        <option th:value="'Aula Tradicional'" th:text="'Aula Tradicional'"></option>
+                        <option th:value="'Lab. de Computacion'" th:text="'Lab. de Computacion'"></option>
+                        <option th:value="'Aula Multimedia'" th:text="'Aula Multimedia'"></option>
+                        <option th:value="'Lab. de Redes'" th:text="'Lab. de Redes'"></option>
+                        <option th:value="'Lab. de Electronica'" th:text="'Lab. de Electronica'"></option>
+                        <option th:value="'Lab. de Ciencia'" th:text="'Lab. de Ciencia'"></option>
+                        <option th:value="'Sala de Innovación'" th:text="'Sala de Innovación'"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="text-right pt-4">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md shadow">
+                    Registrar Curso
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Encabezado con título y botón alineados -->
+<section class="container mx-auto px-4 py-10">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-red-800">Cursos Registrados</h2>
+        <button id="openModal" class="bg-red-700 hover:bg-black transition text-white font-semibold px-8 py-3 rounded-lg shadow-lg">
+            Registrar Nuevo Curso
+        </button>
+    </div>
+    <div class="overflow-x-auto shadow-xl rounded-lg bg-white p-6">
+        <table class="w-full table-auto text-center">
+            <thead>
+            <tr class="bg-black text-white">
+                <th class="py-3 px-4">ID</th>
+                <th class="py-3 px-4">Código</th>
+                <th class="py-3 px-4">Nombre</th>
+                <th class="py-3 px-4">Ciclo</th>
+                <th class="py-3 px-4">Tipo de Curso</th>
+                <th class="py-3 px-4">Días</th>
+                <th class="py-3 px-4">Tipo de Aula</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="curso, iStat : ${cursos}" class="border-b hover:bg-red-50 transition">
+                <td class="py-2 px-4" th:text="${iStat.index + 1}">1</td>
+                <td class="py-2 px-4" th:text="${curso.codigo}">COD001</td>
+                <td class="py-2 px-4" th:text="${curso.nombre}">Nombre</td>
+                <td class="py-2 px-4" th:text="${curso.ciclo}">1</td>
+                <td class="py-2 px-4" th:text="${curso.tipoCurso}">Carrera</td>
+                <td class="py-2 px-4" th:text="${curso.dias}">2</td>
+                <td class="py-2 px-4" th:text="${curso.tipoAula}">Lab. de Computacion</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Apartado de Docente -->
+<!-- Encabezado de Docentes -->
+<section class="container mx-auto px-4 py-10">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-red-800">Docentes Registrados</h2>
+        <button id="openDocenteModal" class="bg-red-700 hover:bg-black transition text-white font-semibold px-8 py-3 rounded-lg shadow-lg">
+            Registrar Nuevo Docente
+        </button>
+    </div>
+
+    <!-- Tabla de Docentes -->
+    <div class="overflow-x-auto shadow-xl rounded-lg bg-white p-6">
+        <table class="w-full table-auto text-center">
+            <thead>
+            <tr class="bg-black text-white">
+                <th class="py-3 px-4">ID</th>
+                <th class="py-3 px-4">Nombre Completo</th>
+                <th class="py-3 px-4">Especialidades</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="docente, iStat : ${docentes}" class="border-b hover:bg-red-50 transition">
+                <td class="py-2 px-4" th:text="${docente.id}">DOC001</td>
+                <td class="py-2 px-4" th:text="${docente.nombre}">Juan Pérez</td>
+                <td class="py-2 px-4" th:text="${#strings.listJoin(docente.especialidades, ', ')}">Programación, Redes</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Modal de Docentes -->
+<div id="docenteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl p-8 w-full max-w-3xl transform scale-95 opacity-0 transition duration-300" id="docenteModalContent">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-red-800">Formulario de Docente</h2>
+            <button id="closeDocenteModal" class="text-red-800 text-2xl font-bold">&times;</button>
+        </div>
+        <form th:action="@{/registrar-docente}" th:object="${docenteNuevo}" method="POST" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700">ID</label>
+                    <input type="text" th:field="*{id}" required class="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                </div>
+                <div>
+                    <label class="block text-gray-700">Nombre Completo</label>
+                    <input type="text" th:field="*{nombre}" required class="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-gray-700">Especialidades (separadas por coma)</label>
+                    <input type="text" name="especialidades"
+                           placeholder="Ej: Programación, Redes, Base de Datos"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-md" />
+                </div>
+            </div>
+            <div class="text-right pt-4">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md shadow">
+                    Registrar Docente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script Modal -->
+<script>
+    const openBtn = document.getElementById('openModal');
+    const closeBtn = document.getElementById('closeModal');
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modalContent');
+
+    openBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50);
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modalContent.classList.add('opacity-0', 'scale-95');
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    });
+</script>
+<!-- Script para Docente -->
+<script>
+    const openDocenteModal = document.getElementById('openDocenteModal');
+    const closeDocenteModal = document.getElementById('closeDocenteModal');
+    const docenteModal = document.getElementById('docenteModal');
+    const docenteModalContent = document.getElementById('docenteModalContent');
+
+    openDocenteModal.addEventListener('click', () => {
+        docenteModal.classList.remove('hidden');
+        setTimeout(() => {
+            docenteModalContent.classList.remove('opacity-0', 'scale-95');
+            docenteModalContent.classList.add('opacity-100', 'scale-100');
+        }, 50);
+    });
+
+    closeDocenteModal.addEventListener('click', () => {
+        docenteModalContent.classList.add('opacity-0', 'scale-95');
+        docenteModalContent.classList.remove('opacity-100', 'scale-100');
+        setTimeout(() => {
+            docenteModal.classList.add('hidden');
+        }, 300);
+    });
+</script>
+
+
+</body>
+</html>
