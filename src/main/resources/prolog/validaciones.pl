@@ -14,10 +14,10 @@ docente_especializado(DocenteID, CursoID) :-
     docente(DocenteID, _, Especialidades),
     curso(CursoID, _, _, _, _, _, _),
     especialidad_requerida_curso(CursoID, EspecialidadRequerida),
-    tiene_especialidad(EspecialidadRequerida, Especialidades), !.
+    tiene_especialidad(EspecialidadRequerida, Especialidades).
 
-% Predicado auxiliar para verificar especialidad con cut
-tiene_especialidad(Especialidad, [Especialidad|_]) :- !.
+% Predicado auxiliar para verificar especialidad
+tiene_especialidad(Especialidad, [Especialidad|_]).
 tiene_especialidad(Especialidad, [_|Resto]) :-
     tiene_especialidad(Especialidad, Resto).
 
@@ -30,21 +30,23 @@ especialidad_requerida_curso(5, estadistica).  % Estadistica
 especialidad_requerida_curso(6, informatica).  % Programacion Web
 especialidad_requerida_curso(7, matematicas).  % Algebra Linear
 especialidad_requerida_curso(8, comunicacion). % Comunicacion
+especialidad_requerida_curso(9, informatica).  % Redes II
+especialidad_requerida_curso(10, matematicas). % Matematica II
 
 % Verificar compatibilidad de equipamiento
 equipamiento_compatible(CursoID, AulaNumero) :-
     curso(CursoID, _, _, _, _, _, EquipamientoRequerido),
     aula(AulaNumero, _, _, _, EquipamientoDisponible, _),
-    equipamiento_suficiente(EquipamientoRequerido, EquipamientoDisponible), !.
+    equipamiento_suficiente(EquipamientoRequerido, EquipamientoDisponible).
 
 % Verificar que el aula tiene todo el equipamiento requerido
-equipamiento_suficiente([], _) :- !.
+equipamiento_suficiente([], _).
 equipamiento_suficiente([Equipo|Resto], EquipamientoDisponible) :-
-    tiene_equipamiento(Equipo, EquipamientoDisponible), !,
+    tiene_equipamiento(Equipo, EquipamientoDisponible),
     equipamiento_suficiente(Resto, EquipamientoDisponible).
 
-% Predicado auxiliar para verificar equipamiento con cut
-tiene_equipamiento(Equipo, [Equipo|_]) :- !.
+% Predicado auxiliar para verificar equipamiento
+tiene_equipamiento(Equipo, [Equipo|_]).
 tiene_equipamiento(Equipo, [_|Resto]) :-
     tiene_equipamiento(Equipo, Resto).
 
@@ -56,17 +58,17 @@ tiene_equipamiento(Equipo, [_|Resto]) :-
 tipo_aula_compatible(CursoID, AulaNumero) :-
     curso(CursoID, _, _, _, TipoSesion, _, _),
     aula(AulaNumero, _, _, _, _, TipoAula),
-    compatible_sesion_aula(TipoSesion, TipoAula), !.
+    compatible_sesion_aula(TipoSesion, TipoAula).
 
 % Definir compatibilidad entre tipos de sesion y aulas
-compatible_sesion_aula(teorico, teorica) :- !.
-compatible_sesion_aula(teorico, laboratorio_computo) :- !.
-compatible_sesion_aula(practico, laboratorio_computo) :- !.
-compatible_sesion_aula(practico, laboratorio_quimica) :- !.
-compatible_sesion_aula(practico, laboratorio_fisica) :- !.
-compatible_sesion_aula(teorico_practico, laboratorio_computo) :- !.
-compatible_sesion_aula(teorico_practico, laboratorio_quimica) :- !.
-compatible_sesion_aula(teorico_practico, laboratorio_fisica) :- !.
+compatible_sesion_aula(teorico, teorica).
+compatible_sesion_aula(teorico, laboratorio_computo).
+compatible_sesion_aula(practico, laboratorio_computo).
+compatible_sesion_aula(practico, laboratorio_quimica).
+compatible_sesion_aula(practico, laboratorio_fisica).
+compatible_sesion_aula(teorico_practico, laboratorio_computo).
+compatible_sesion_aula(teorico_practico, laboratorio_quimica).
+compatible_sesion_aula(teorico_practico, laboratorio_fisica).
 
 % ============================================================================
 % VALIDACIONES BASICAS
@@ -90,7 +92,7 @@ horario_laboral_valido(Inicio, Fin) :-
 duracion_sesion_valida(Inicio, Fin) :-
     Duracion is Fin - Inicio,
     Duracion >= 1,  % Minimo 1 hora
-    Duracion =< 2.  % Maximo 2 horas
+    Duracion =< 4.  % Maximo 4 horas
 
 % ============================================================================
 % VALIDACION COMPLETA DE HORARIO
@@ -98,15 +100,15 @@ duracion_sesion_valida(Inicio, Fin) :-
 
 % Validar un horario individual
 validar_horario_individual(horario(CursoID, DocenteID, AulaNumero, Dia, Inicio, Fin)) :-
-    curso(CursoID, _, _, _, _, _, _), !,
-    docente(DocenteID, _, _), !,
-    aula(AulaNumero, _, _, _, _, _), !,
-    dia_laboral(Dia), !,
-    horario_laboral_valido(Inicio, Fin), !,
-    duracion_sesion_valida(Inicio, Fin), !,
-    docente_especializado(DocenteID, CursoID), !,
-    equipamiento_compatible(CursoID, AulaNumero), !,
-    tipo_aula_compatible(CursoID, AulaNumero), !.
+    curso(CursoID, _, _, _, _, _, _),
+    docente(DocenteID, _, _),
+    aula(AulaNumero, _, _, _, _, _),
+    dia_laboral(Dia),
+    horario_laboral_valido(Inicio, Fin),
+    duracion_sesion_valida(Inicio, Fin),
+    docente_especializado(DocenteID, CursoID),
+    equipamiento_compatible(CursoID, AulaNumero),
+    tipo_aula_compatible(CursoID, AulaNumero).
 
 % Validar una lista completa de horarios
 validar_horario(ListaHorarios) :-

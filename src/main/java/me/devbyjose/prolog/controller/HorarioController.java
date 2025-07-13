@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -19,6 +20,10 @@ public class HorarioController {
 
     @GetMapping("/generar-horarios")
     public String mostrarGenerarHorarios(Model model) {
+        // Inicializar valores por defecto para evitar errores de null
+        model.addAttribute("exito", false);
+        model.addAttribute("mensaje", "");
+        model.addAttribute("horarios", new ArrayList<>());
         return "generar_horarios";
     }
 
@@ -33,10 +38,12 @@ public class HorarioController {
             } else {
                 model.addAttribute("exito", false);
                 model.addAttribute("mensaje", "No se pudieron generar horarios. Verifique que hay cursos y docentes registrados.");
+                model.addAttribute("horarios", new ArrayList<>());
             }
         } catch (Exception e) {
             model.addAttribute("exito", false);
             model.addAttribute("mensaje", "Error al generar horarios: " + e.getMessage());
+            model.addAttribute("horarios", new ArrayList<>());
         }
         return "resultado_horarios";
     }

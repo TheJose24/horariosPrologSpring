@@ -33,7 +33,6 @@ generar_horario_con_reporte(Resultado) :-
 % ============================================================================
 % PREDICADO PRINCIPAL PARA SPRING BOOT
 % ============================================================================
-% Este es el metodo principal que debes usar desde Java/Spring Boot
 
 main_generar_horario(TipoAlgoritmo, Resultado) :-
     (TipoAlgoritmo = 'CLPFD' ->

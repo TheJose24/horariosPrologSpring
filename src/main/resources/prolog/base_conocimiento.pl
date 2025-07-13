@@ -12,8 +12,12 @@
 :- dynamic(aula/6).
 :- dynamic(horario/6).
 
+% Directivas para predicados discontiguos (si es necesario)
+:- discontiguous docente/3.
+:- discontiguous curso/7.
+
 % ============================================================================
-% DATOS DE DOCENTES
+% DATOS DE DOCENTES (TODOS AGRUPADOS)
 % ============================================================================
 % Estructura: docente(ID, NombreCompleto, ListaEspecialidades)
 
@@ -25,11 +29,13 @@ docente(5, 'Luis Herrera', [matematicas, estadistica]).
 docente(6, 'Patricia Vega', [fisica, matematicas]).
 docente(7, 'Roberto Silva', [informatica, redes]).
 docente(8, 'Carmen Torres', [literatura, comunicacion]).
-docente(9, 'Carmen Torres', [biologia, comunicacion]).
-docente(10, 'Carmen Torres', [literatura, quimica]).
+docente(9, 'Jose Martinez', [biologia, quimica]).
+docente(10, 'Ana Gutierrez', [matematicas, estadistica]).
+docente(11, 'Juan Perez', [matematicas, fisica]).
+docente(12, 'Miguel Grau', [matematicas]).
 
 % ============================================================================
-% DATOS DE CURSOS
+% DATOS DE CURSOS (TODOS AGRUPADOS)
 % ============================================================================
 % Estructura: curso(CodigoCurso, NombreCurso, Ciclo, Naturaleza, TipoSesion, HorasSemana, EquipamientoNecesario)
 
@@ -41,6 +47,8 @@ curso(5, 'Estadistica', 2, general, teorico, 3, [proyector, computadoras]).
 curso(6, 'Programacion Web', 5, carrera, teorico_practico, 4, [computadoras, internet]).
 curso(7, 'Algebra Linear', 2, general, teorico, 2, [proyector, pizarra]).
 curso(8, 'Comunicacion', 1, general, teorico, 2, [proyector, audio]).
+curso(9, 'Redes II', 8, carrera, practico, 4, [computadoras, equipos_redes]).
+curso(10, 'Matematica II', 4, general, teorico, 4, [proyector, pizarra]).
 
 % ============================================================================
 % DATOS DE AULAS
@@ -101,5 +109,3 @@ mostrar_estadisticas :-
     format('Cursos registrados: ~w~n', [Cursos]),
     format('Aulas disponibles: ~w~n', [Aulas]),
     format('================================~n').
-docente(11, 'Juan Perez', [matematicas, fisica]).
-curso(9, 'Redes II', 8, carrera, practico, 4, [computadoras, equipos_redes]).
