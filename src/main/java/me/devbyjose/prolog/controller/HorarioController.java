@@ -45,6 +45,6 @@ public class HorarioController {
             model.addAttribute("mensaje", "Error al generar horarios: " + e.getMessage());
             model.addAttribute("horarios", new ArrayList<>());
         }
-        return "resultado_horarios";
+        return "generar_horarios";
     }
 }

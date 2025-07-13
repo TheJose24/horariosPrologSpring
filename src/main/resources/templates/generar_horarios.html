@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horarios Generados</title>
+    <title>Generar Horarios</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 text-gray-900">
 
 <header class="bg-red-900 text-white py-5 shadow-lg">
     <div class="container mx-auto flex justify-between items-center px-6">
-        <h1 class="text-2xl font-bold tracking-wide">Horarios Generados</h1>
+        <h1 class="text-2xl font-bold tracking-wide">Generar Horarios</h1>
         <a href="/" class="bg-black hover:bg-red-700 transition text-white px-5 py-2 rounded-md shadow">
             Volver al Inicio
         </a>
@@ -18,36 +18,116 @@
 </header>
 
 <div class="container mx-auto px-4 py-10">
-    <div th:if="${exito}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-        <span th:text="${mensaje}"></span>
-    </div>
     
-    <div th:if="${!exito}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-        <span th:text="${mensaje}"></span>
+    <!-- Formulario para generar horarios -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-xl font-bold text-red-800 mb-4">Configuración de Generación</h2>
+        <form method="POST" action="/generar-horarios" class="space-y-4">
+            <div>
+                <label for="tipoAlgoritmo" class="block text-sm font-medium text-gray-700 mb-2">
+                    Tipo de Algoritmo
+                </label>
+                <select id="tipoAlgoritmo" name="tipoAlgoritmo" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="BASICO">Básico</option>
+                    <option value="AVANZADO">Avanzado</option>
+                    <option value="OPTIMIZADO">Optimizado</option>
+                </select>
+            </div>
+            <button type="submit" 
+                    class="w-full bg-red-900 hover:bg-red-800 text-white font-bold py-3 px-6 rounded-md transition duration-200 shadow-lg">
+                Generar Horarios
+            </button>
+        </form>
     </div>
 
+    <!-- Mensajes de resultado -->
+    <div th:if="${exito}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <span th:text="${mensaje}"></span>
+        </div>
+    </div>
+    
+    <div th:if="${!exito and mensaje != null and !mensaje.empty}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+            </svg>
+            <span th:text="${mensaje}"></span>
+        </div>
+    </div>
+
+    <!-- Tabla de horarios generados -->
     <div th:if="${horarios != null and !horarios.empty}" class="overflow-x-auto shadow-xl rounded-lg bg-white p-6">
-        <h2 class="text-xl font-bold text-red-800 mb-4">Cronograma de Clases</h2>
-        <table class="w-full table-auto text-center">
-            <thead>
-                <tr class="bg-black text-white">
-                    <th class="py-3 px-4">Día</th>
-                    <th class="py-3 px-4">Hora</th>
-                    <th class="py-3 px-4">Curso</th>
-                    <th class="py-3 px-4">Docente</th>
-                    <th class="py-3 px-4">Aula</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="horario : ${horarios}" class="border-b hover:bg-red-50 transition">
-                    <td class="py-2 px-4 capitalize" th:text="${horario.dia}"></td>
-                    <td class="py-2 px-4" th:text="${horario.horaInicio + ':00 - ' + horario.horaFin + ':00'}"></td>
-                    <td class="py-2 px-4" th:text="${horario.nombreCurso}"></td>
-                    <td class="py-2 px-4" th:text="${horario.nombreDocente}"></td>
-                    <td class="py-2 px-4" th:text="${horario.ubicacionAula}"></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-red-800">Cronograma de Clases Generado</h2>
+            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                <span th:text="${horarios.size()}"></span> clases programadas
+            </span>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full table-auto text-center">
+                <thead>
+                    <tr class="bg-red-900 text-white">
+                        <th class="py-3 px-4 text-left">Día</th>
+                        <th class="py-3 px-4">Horario</th>
+                        <th class="py-3 px-4 text-left">Curso</th>
+                        <th class="py-3 px-4 text-left">Docente</th>
+                        <th class="py-3 px-4">Aula</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="horario, stat : ${horarios}" 
+                        th:class="${stat.odd} ? 'border-b bg-gray-50 hover:bg-red-50 transition' : 'border-b hover:bg-red-50 transition'">
+                        <td class="py-3 px-4 text-left capitalize font-medium" th:text="${horario.dia}"></td>
+                        <td class="py-3 px-4 font-mono text-sm">
+                            <span th:text="${horario.horaInicio + ':00' + ' - ' + horario.horaFin + ':00'}"></span>
+                        </td>
+                        <td class="py-3 px-4 text-left">
+                            <div class="font-medium" th:text="${horario.nombreCurso}"></div>
+                        </td>
+                        <td class="py-3 px-4 text-left">
+                            <div class="font-medium" th:text="${horario.nombreDocente}"></div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium" 
+                                  th:text="${horario.ubicacionAula}"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Resumen de estadísticas -->
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <div class="text-blue-800 font-bold text-lg" th:text="${horarios.size()}"></div>
+                <div class="text-blue-600 text-sm">Total de Clases</div>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg">
+                <div class="text-green-800 font-bold text-lg" 
+                     th:text="${#lists.size(#lists.distinct(horarios.![nombreDocente]))}"></div>
+                <div class="text-green-600 text-sm">Docentes Asignados</div>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-lg">
+                <div class="text-purple-800 font-bold text-lg" 
+                     th:text="${#lists.size(#lists.distinct(horarios.![nombreCurso]))}"></div>
+                <div class="text-purple-600 text-sm">Cursos Programados</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mensaje cuando no hay horarios -->
+    <div th:if="${horarios == null or horarios.empty}" class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+        <svg class="w-16 h-16 text-yellow-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-yellow-800 mb-2">No hay horarios generados</h3>
+        <p class="text-yellow-700">Utiliza el formulario de arriba para generar un nuevo cronograma de clases.</p>
     </div>
 </div>
 
