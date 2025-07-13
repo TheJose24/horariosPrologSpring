@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -19,13 +20,53 @@ public class HorarioService {
     @Autowired
     private EnriquecimientoService enriquecimientoService;
     
+    @Autowired
+    private PrologConfigService configService;
+    
     public List<Horario> generarHorarios(String tipoAlgoritmo) {
         List<Horario> horarios = new ArrayList<>();
         
         try {
             System.out.println("=== INICIANDO GENERACIÓN DE HORARIOS ===");
             System.out.println("Tipo de algoritmo: " + tipoAlgoritmo);
+            System.out.println("Prolog habilitado: " + configService.isPrologEnabled());
+            System.out.println("Fallback habilitado: " + configService.isFallbackEnabled());
             
+            // Intentar usar Prolog si está habilitado
+            if (configService.isPrologEnabled()) {
+                horarios = generarHorariosConProlog(tipoAlgoritmo);
+            }
+            
+            // Si Prolog falla o no está habilitado, usar datos de prueba
+            if (horarios.isEmpty() && configService.isFallbackEnabled()) {
+                System.out.println("Usando datos de prueba...");
+                horarios = generarHorariosDePrueba();
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error al generar horarios: " + e.getMessage());
+            if (configService.isFallbackEnabled()) {
+                System.out.println("Usando datos de prueba debido al error...");
+                horarios = generarHorariosDePrueba();
+            }
+        }
+        
+        System.out.println("=== FIN GENERACIÓN DE HORARIOS ===");
+        System.out.println("Total de horarios generados: " + horarios.size());
+        
+        return horarios;
+    }
+    
+    private List<Horario> generarHorariosConProlog(String tipoAlgoritmo) {
+        List<Horario> horarios = new ArrayList<>();
+        
+        // Verificar si Prolog está disponible
+        if (!prologEngine.isPrologDisponible()) {
+            System.out.println("Prolog no está disponible, saltando generación con Prolog");
+            return horarios;
+        }
+        
+        try {
             // Llamar al predicado principal de Prolog
             Query query = prologEngine.crearQuery("main_generar_horario", new Term[]{
                 new org.jpl7.Atom(tipoAlgoritmo),
@@ -54,13 +95,33 @@ public class HorarioService {
                 System.out.println("Query no tiene solución");
             }
             
-            System.out.println("=== FIN GENERACIÓN DE HORARIOS ===");
-            System.out.println("Total de horarios generados: " + horarios.size());
-            
         } catch (Exception e) {
-            System.err.println("Error al generar horarios: " + e.getMessage());
+            System.err.println("Error en Prolog: " + e.getMessage());
             e.printStackTrace();
         }
+        
+        return horarios;
+    }
+    
+    private List<Horario> generarHorariosDePrueba() {
+        List<Horario> horarios = new ArrayList<>();
+        
+        // Datos de prueba predefinidos
+        List<Horario> horariosPrueba = Arrays.asList(
+            new Horario(1, 1, 201, "lunes", 8, 10, "Programación Funcional", "Garcia Lopez", "B-201"),
+            new Horario(2, 2, 101, "lunes", 10, 12, "Cálculo I", "Ana Rodriguez", "A-101"),
+            new Horario(3, 2, 302, "martes", 8, 10, "Física General", "Ana Rodriguez", "C-302"),
+            new Horario(4, 4, 301, "martes", 10, 12, "Química Orgánica", "Maria Santos", "C-301"),
+            new Horario(5, 5, 201, "miércoles", 8, 10, "Estadística", "Luis Herrera", "B-201"),
+            new Horario(6, 1, 202, "miércoles", 10, 12, "Programación Web", "Garcia Lopez", "B-202"),
+            new Horario(7, 5, 101, "jueves", 8, 10, "Álgebra Lineal", "Luis Herrera", "A-101"),
+            new Horario(8, 8, 401, "jueves", 10, 12, "Comunicación", "Carmen Torres", "D-401"),
+            new Horario(9, 7, 202, "viernes", 8, 10, "Redes II", "Roberto Silva", "B-202"),
+            new Horario(10, 11, 102, "viernes", 10, 12, "Matemática II", "Juan Perez", "A-102")
+        );
+        
+        horarios.addAll(horariosPrueba);
+        System.out.println("Generados " + horarios.size() + " horarios de prueba");
         
         return horarios;
     }

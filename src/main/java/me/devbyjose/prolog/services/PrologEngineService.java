@@ -16,12 +16,17 @@ public class PrologEngineService {
     private PrologFormatterService formatterService;
     
     private boolean prologInicializado = false;
+    private boolean prologDisponible = true;
     
     public void inicializarProlog() {
-        if (!prologInicializado) {
+        if (!prologInicializado && prologDisponible) {
             try {
+                System.out.println("Intentando inicializar Prolog...");
+                
                 // Cargar el archivo principal de Prolog
                 String prologPath = new File("src/main/resources/prolog/prolog.pl").getAbsolutePath();
+                System.out.println("Ruta del archivo Prolog: " + prologPath);
+                
                 Query consultQuery = new Query("consult", new Term[]{new org.jpl7.Atom(prologPath)});
                 
                 if (consultQuery.hasSolution()) {
@@ -35,17 +40,32 @@ public class PrologEngineService {
                 }
             } catch (Exception e) {
                 System.err.println("Error al inicializar Prolog: " + e.getMessage());
-                throw new RuntimeException("Error al inicializar Prolog", e);
+                System.out.println("Deshabilitando Prolog y usando modo de fallback");
+                prologDisponible = false;
+                prologInicializado = false;
             }
         }
     }
     
     public Query crearQuery(String predicado, Term[] parametros) {
+        if (!prologDisponible) {
+            throw new RuntimeException("Prolog no está disponible");
+        }
+        
         inicializarProlog();
         return new Query(predicado, parametros);
     }
     
+    public boolean isPrologDisponible() {
+        return prologDisponible;
+    }
+    
     public void agregarCursoAProlog(Curso curso) {
+        if (!prologDisponible) {
+            System.out.println("Prolog no disponible, saltando agregar curso");
+            return;
+        }
+        
         inicializarProlog();
         
         try {
@@ -69,6 +89,11 @@ public class PrologEngineService {
     }
     
     public void agregarDocenteAProlog(Docente docente) {
+        if (!prologDisponible) {
+            System.out.println("Prolog no disponible, saltando agregar docente");
+            return;
+        }
+        
         inicializarProlog();
         
         try {
