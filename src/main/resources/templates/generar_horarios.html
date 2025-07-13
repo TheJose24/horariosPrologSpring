@@ -29,10 +29,13 @@
                 </label>
                 <select id="tipoAlgoritmo" name="tipoAlgoritmo" 
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="BASICO">Básico</option>
-                    <option value="AVANZADO">Avanzado</option>
-                    <option value="OPTIMIZADO">Optimizado</option>
+                    <option value="BASICO">Básico (10 clases)</option>
+                    <option value="AVANZADO">Avanzado (15 clases)</option>
+                    <option value="OPTIMIZADO">Optimizado (20 clases)</option>
                 </select>
+                <p class="text-sm text-gray-600 mt-1">
+                    Selecciona el tipo de algoritmo para generar diferentes cantidades de horarios
+                </p>
             </div>
             <button type="submit" 
                     class="w-full bg-red-900 hover:bg-red-800 text-white font-bold py-3 px-6 rounded-md transition duration-200 shadow-lg">
@@ -103,7 +106,7 @@
         </div>
         
         <!-- Resumen de estadísticas -->
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-blue-50 p-4 rounded-lg">
                 <div class="text-blue-800 font-bold text-lg" th:text="${horarios.size()}"></div>
                 <div class="text-blue-600 text-sm">Total de Clases</div>
@@ -117,6 +120,43 @@
                 <div class="text-purple-800 font-bold text-lg" 
                      th:text="${#lists.size(#lists.distinct(horarios.![nombreCurso]))}"></div>
                 <div class="text-purple-600 text-sm">Cursos Programados</div>
+            </div>
+            <div class="bg-orange-50 p-4 rounded-lg">
+                <div class="text-orange-800 font-bold text-lg" 
+                     th:text="${#lists.size(#lists.distinct(horarios.![ubicacionAula]))}"></div>
+                <div class="text-orange-600 text-sm">Aulas Utilizadas</div>
+            </div>
+        </div>
+        
+        <!-- Información adicional -->
+        <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Distribución por Días</h3>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-sm">
+                <div class="bg-white p-2 rounded text-center">
+                    <div class="font-bold text-blue-600" 
+                         th:text="${#lists.size(#lists.filter(horarios, #this.dia == 'lunes'))}">0</div>
+                    <div class="text-gray-600">Lunes</div>
+                </div>
+                <div class="bg-white p-2 rounded text-center">
+                    <div class="font-bold text-blue-600" 
+                         th:text="${#lists.size(#lists.filter(horarios, #this.dia == 'martes'))}">0</div>
+                    <div class="text-gray-600">Martes</div>
+                </div>
+                <div class="bg-white p-2 rounded text-center">
+                    <div class="font-bold text-blue-600" 
+                         th:text="${#lists.size(#lists.filter(horarios, #this.dia == 'miércoles'))}">0</div>
+                    <div class="text-gray-600">Miércoles</div>
+                </div>
+                <div class="bg-white p-2 rounded text-center">
+                    <div class="font-bold text-blue-600" 
+                         th:text="${#lists.size(#lists.filter(horarios, #this.dia == 'jueves'))}">0</div>
+                    <div class="text-gray-600">Jueves</div>
+                </div>
+                <div class="bg-white p-2 rounded text-center">
+                    <div class="font-bold text-blue-600" 
+                         th:text="${#lists.size(#lists.filter(horarios, #this.dia == 'viernes'))}">0</div>
+                    <div class="text-gray-600">Viernes</div>
+                </div>
             </div>
         </div>
     </div>
