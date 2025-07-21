@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.*;
+import me.devbyjose.prolog.model.Horario;
 
 @Controller
 public class AsignacionController {
@@ -18,7 +19,7 @@ public class AsignacionController {
 
     @GetMapping("/ver-asignaciones")
     public String verAsignaciones(Model model) {
-        Map<Curso, List<AsignacionHorario>> asignaciones = asignacionService.obtenerAsignacionesCursos();
+        Map<Integer, List<Horario>> asignaciones = asignacionService.obtenerAsignacionesPorCurso();
         model.addAttribute("asignaciones", asignaciones);
         return "ver_asignaciones";
     }

@@ -2,6 +2,7 @@ package me.devbyjose.prolog.services;
 
 import me.devbyjose.prolog.model.Curso;
 import me.devbyjose.prolog.model.Docente;
+import me.devbyjose.prolog.model.Horario;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -60,6 +61,56 @@ public class ArchivoService {
         return cursos;
     }
     
+    public List<Horario> leerHorariosDesdeArchivo() {
+        List<Horario> horarios = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(PROLOG_FILE))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                if (linea.trim().startsWith("horario(")) {
+                    Horario horario = parsearHorario(linea);
+                    if (horario != null) {
+                        horarios.add(horario);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer horarios: " + e.getMessage());
+        }
+        return horarios;
+    }
+
+    public void limpiarHorariosEnArchivo() {
+        try {
+            List<String> lineas = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(new FileReader(PROLOG_FILE))) {
+                String linea;
+                while ((linea = reader.readLine()) != null) {
+                    if (!linea.trim().startsWith("horario(")) {
+                        lineas.add(linea);
+                    }
+                }
+            }
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROLOG_FILE, false))) {
+                for (String l : lineas) {
+                    writer.write(l);
+                    writer.newLine();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al limpiar horarios en archivo: " + e.getMessage());
+        }
+    }
+
+    public void escribirHorariosEnArchivo(List<String> hechosHorarios) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROLOG_FILE, true))) {
+            for (String hecho : hechosHorarios) {
+                writer.write(hecho);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al escribir horarios en archivo: " + e.getMessage());
+        }
+    }
+
     private Docente parsearDocente(String linea) {
         try {
             // Patrón actualizado para manejar el formato correcto
@@ -134,5 +185,26 @@ public class ArchivoService {
         } else {
             return "Aula Tradicional";
         }
+    }
+
+    private Horario parsearHorario(String linea) {
+        try {
+            // horario(CursoID, DocenteID, AulaNumero, Dia, HoraInicio, HoraFin)
+            Pattern pattern = Pattern.compile("horario\\((\\d+),\\s*(\\d+),\\s*(\\d+),\\s*([a-zA-Z]+),\\s*(\\d+),\\s*(\\d+)\\)");
+            Matcher matcher = pattern.matcher(linea);
+            if (matcher.find()) {
+                int cursoId = Integer.parseInt(matcher.group(1));
+                int docenteId = Integer.parseInt(matcher.group(2));
+                int aulaNumero = Integer.parseInt(matcher.group(3));
+                String dia = matcher.group(4);
+                int horaInicio = Integer.parseInt(matcher.group(5));
+                int horaFin = Integer.parseInt(matcher.group(6));
+                // Los campos de nombreCurso, nombreDocente, ubicacionAula pueden enriquecerse después
+                return new Horario(cursoId, docenteId, aulaNumero, dia, horaInicio, horaFin, "", "", "");
+            }
+        } catch (Exception e) {
+            System.err.println("Error al parsear horario: " + e.getMessage());
+        }
+        return null;
     }
 }

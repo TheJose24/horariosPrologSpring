@@ -88,6 +88,18 @@ limpiar_horarios :-
     retractall(horario(_, _, _, _, _, _)).
 
 % ============================================================================
+% GENERACIÓN AUTOMÁTICA DE HORARIOS (EJEMPLO BÁSICO)
+% ============================================================================
+% Este predicado limpia los horarios anteriores y genera un horario para cada curso con el primer docente disponible y la primera aula disponible, en lunes de 8 a 10.
+
+generar_horarios :-
+    retractall(horario(_, _, _, _, _, _)),
+    forall(
+        (curso(CodCurso, _, _, _, _, _, _), docente(IdDocente, _, _), aula(NumAula, _, _, _, _, _)),
+        assertz(horario(CodCurso, IdDocente, NumAula, lunes, 8, 10))
+    ).
+
+% ============================================================================
 % PREDICADOS DE INICIALIZACION
 % ============================================================================
 
@@ -109,3 +121,19 @@ mostrar_estadisticas :-
     format('Cursos registrados: ~w~n', [Cursos]),
     format('Aulas disponibles: ~w~n', [Aulas]),
     format('================================~n').
+docente(14, 'messi', [matematicas]).
+curso(15, 'messi', 9, especialidad, teorico_practico, 4, [proyector]).
+docente(22, 'susy diaz', [quimica]).
+curso(10, 'sssss', 10, especialidad, teorico_practico, 4, [proyector]).
+horario(1, 1, 101, lunes, 8, 10).
+horario(2, 2, 101, lunes, 8, 10).
+horario(3, 3, 101, lunes, 8, 10).
+horario(4, 4, 101, lunes, 8, 10).
+horario(5, 5, 101, lunes, 8, 10).
+horario(6, 6, 101, lunes, 8, 10).
+horario(7, 7, 101, lunes, 8, 10).
+horario(8, 8, 101, lunes, 8, 10).
+horario(9, 9, 101, lunes, 8, 10).
+horario(10, 10, 101, lunes, 8, 10).
+horario(15, 11, 101, lunes, 8, 10).
+horario(10, 12, 101, lunes, 8, 10).

@@ -17,18 +17,17 @@ public class PrologEngineService {
     
     private boolean prologInicializado = false;
     private boolean prologDisponible = true;
+    private boolean prologErrorRegistrado = false;
+    private String prologErrorMensaje = "";
     
     public void inicializarProlog() {
         if (!prologInicializado && prologDisponible) {
             try {
                 System.out.println("Intentando inicializar Prolog...");
-                
                 // Cargar el archivo principal de Prolog
                 String prologPath = new File("src/main/resources/prolog/prolog.pl").getAbsolutePath();
                 System.out.println("Ruta del archivo Prolog: " + prologPath);
-                
                 Query consultQuery = new Query("consult", new Term[]{new org.jpl7.Atom(prologPath)});
-                
                 if (consultQuery.hasSolution()) {
                     // Inicializar el sistema
                     Query initQuery = new Query("inicializar_sistema_completo");
@@ -38,9 +37,13 @@ public class PrologEngineService {
                 } else {
                     throw new RuntimeException("No se pudo cargar el archivo Prolog");
                 }
-            } catch (Exception e) {
-                System.err.println("Error al inicializar Prolog: " + e.getMessage());
-                System.out.println("Deshabilitando Prolog y usando modo de fallback");
+            } catch (Throwable e) {
+                if (!prologErrorRegistrado) {
+                    prologErrorRegistrado = true;
+                    prologErrorMensaje = "Error al inicializar Prolog: " + e.getMessage();
+                    System.err.println(prologErrorMensaje);
+                    System.out.println("Deshabilitando Prolog y usando modo de fallback");
+                }
                 prologDisponible = false;
                 prologInicializado = false;
             }
@@ -49,10 +52,12 @@ public class PrologEngineService {
     
     public Query crearQuery(String predicado, Term[] parametros) {
         if (!prologDisponible) {
-            throw new RuntimeException("Prolog no está disponible");
+            throw new RuntimeException("Prolog no está disponible. " + prologErrorMensaje);
         }
-        
         inicializarProlog();
+        if (!prologDisponible) {
+            throw new RuntimeException("Prolog no está disponible. " + prologErrorMensaje);
+        }
         return new Query(predicado, parametros);
     }
     
@@ -60,14 +65,16 @@ public class PrologEngineService {
         return prologDisponible;
     }
     
+    public String getPrologErrorMensaje() {
+        return prologErrorMensaje;
+    }
+    
     public void agregarCursoAProlog(Curso curso) {
         if (!prologDisponible) {
             System.out.println("Prolog no disponible, saltando agregar curso");
             return;
         }
-        
         inicializarProlog();
-        
         try {
             // Crear el término para el curso
             Query query = new Query("assertz", new Term[]{
@@ -81,7 +88,6 @@ public class PrologEngineService {
                     crearListaEquipamiento(curso.getTipoAula())
                 })
             });
-            
             query.hasSolution();
         } catch (Exception e) {
             System.err.println("Error al agregar curso a Prolog: " + e.getMessage());
@@ -93,15 +99,12 @@ public class PrologEngineService {
             System.out.println("Prolog no disponible, saltando agregar docente");
             return;
         }
-        
         inicializarProlog();
-        
         try {
             // Crear lista de especialidades
             Term[] especialidades = docente.getEspecialidades().stream()
                     .map(org.jpl7.Atom::new)
                     .toArray(Term[]::new);
-            
             Query query = new Query("assertz", new Term[]{
                 new org.jpl7.Compound("docente", new Term[]{
                     new org.jpl7.Integer(docente.getId().intValue()),
@@ -109,7 +112,6 @@ public class PrologEngineService {
                     new org.jpl7.Compound(".", especialidades)
                 })
             });
-            
             query.hasSolution();
         } catch (Exception e) {
             System.err.println("Error al agregar docente a Prolog: " + e.getMessage());
